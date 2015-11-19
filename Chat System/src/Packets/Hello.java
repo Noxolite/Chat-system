@@ -3,7 +3,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 
-public class Hello extends Packet implements Serializable{
+public class Hello extends Packet{
+	
 	private String nickname;
 	private InetAddress ip;
 	

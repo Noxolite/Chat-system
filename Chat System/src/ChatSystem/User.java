@@ -13,7 +13,12 @@ public class User {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		this.nickName = nickName + ip.toString();
+		this.nickName = nickName + "(" + ip.toString() + ")";
+	}
+	
+	public User(String nickName, InetAddress ip){
+		this.ip = ip;
+		this.nickName = nickName;
 	}
 
 	public String getNickName() {
@@ -22,6 +27,10 @@ public class User {
 
 	public InetAddress getIp() {
 		return ip;
+	}
+	
+	public String toString(){
+		return this.nickName;
 	}
 	
 }

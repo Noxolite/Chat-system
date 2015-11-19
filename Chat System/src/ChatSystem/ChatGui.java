@@ -11,25 +11,31 @@ import java.util.*;
 
 import javax.swing.*;
 
-public class ChatGui extends JFrame implements Observer, ActionListener {
+public class ChatGui extends JFrame implements Observer, ActionListener, WindowListener {
 
+	private static final long serialVersionUID = 1L;
 	private static ChatGui instanceGui;
+	private LogGui mLogGUI ;
 	private ChatController chatCtrl;
-	private JTextArea txtName;
 	private JTextArea txtWriting;
 	private JTextArea txtRecMessage;
-	private JButton bConnect;
 	private JButton bSend;
-	private JLabel lUserName;
+	private JButton bDisconnect;
 	private JLabel lWriteHere;
-	private JLabel lErreur;
 	private JLabel lListtitle;
-	private JList userList;
-	
+	private JList<User> userList;
+	private DefaultListModel<User> listModel;
+	private JScrollPane scrollPane1;
+	private JScrollPane scrollPane2;
+
 	private ChatGui(){
-		//this.chatCtrl = ChatController.getInstance();
+		this.chatCtrl = ChatController.getInstance();
+		this.chatCtrl.getMyUserList().addObserver(this);
+		initComponents();
+		this.setAlwaysOnTop(true);
+		addWindowListener(this);
 	}
-	
+
 	public static ChatGui getInstance(){
 		if(instanceGui == null){
 			instanceGui = new ChatGui();
@@ -37,66 +43,39 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		return instanceGui;
 	}
 
+	public JTextArea getTxtRecMessage(){
+		return this.txtRecMessage;
+	}
+
 	public ChatController getChatCtrl() {
 		return chatCtrl;
 	}
 
-	public void ConnectionWindow(){
-		
-		this.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		
-		lUserName = new JLabel("Enter your user name");
-		gbc.gridx = gbc.gridy = 0;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.gridheight = 1;
-		gbc.insets = new Insets(10, 15, 0, 15);
-		this.add(lUserName, gbc);
-		
-		txtName = new JTextArea();
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.gridheight = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 15, 0, 15);
-		this.add(txtName, gbc);
-		
-		lErreur = new JLabel();
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.gridheight = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 15, 0, 15);
-		this.add(lErreur, gbc);
-		
-		bConnect = new JButton("Connect");
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.gridheight = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 60, 10, 60);
-		this.add(bConnect, gbc);
-		bConnect.addActionListener(this);
-		this.pack();
-		this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	public void setmLogGUI(LogGui mLogGUI) {
+		this.mLogGUI = mLogGUI;
 	}
-	
-	public void ChatWindow(){
-		
+
+	public void disconnect(){
+		this.chatCtrl.performDisconnect();
+		this.mLogGUI.closeChatGui();
+		this.txtRecMessage.setText("");
+		this.txtWriting.setText("");
+	}
+
+	public void initComponents(){
+
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
-		
-		JLabel lListtitle = new JLabel("Connected Users");
+
+		lListtitle = new JLabel("Connected Users");
 		gbc.gridx = gbc.gridy = 0;
 		gbc.gridwidth = gbc.gridheight = 1;
 		gbc.insets = new Insets(10, 10, 5, 10);
 		this.add(lListtitle, gbc);
-		
-		JList userList = new JList();
+
+		listModel = new DefaultListModel<User>();
+		userList = new JList<User>(listModel);
+		userList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = gbc.gridheight = 1;
@@ -105,8 +84,8 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		gbc.ipadx = 100;
 		gbc.ipady = 200;
 		this.add(userList, gbc);
-		
-		JTextArea txtRecMessage = new JTextArea();
+
+		txtRecMessage = new JTextArea();
 		txtRecMessage.setEditable(false);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -117,14 +96,14 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		gbc.ipadx = 500;
 		gbc.ipady = 200;
 		this.add(txtRecMessage, gbc);
-		
-		JScrollPane scrollPane2 = new JScrollPane(txtRecMessage);
+
+		scrollPane2 = new JScrollPane(txtRecMessage);
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
-        add(scrollPane2, gbc);
-		
-		JLabel lWriteHere = new JLabel("Enter your message");
+		add(scrollPane2, gbc);
+
+		lWriteHere = new JLabel("Enter your message");
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.gridwidth = gbc.gridheight = 1;
@@ -133,8 +112,8 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		gbc.ipadx = 0;
 		gbc.ipady = 0;
 		this.add(lWriteHere, gbc);
-		
-		JTextArea txtWriting = new JTextArea();
+
+		txtWriting = new JTextArea();
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridwidth = 2;
@@ -144,14 +123,14 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		gbc.ipadx = 400;
 		gbc.ipady = 100;
 		this.add(txtWriting, gbc);
-		
-		JScrollPane scrollPane1 = new JScrollPane(txtWriting);
+
+		scrollPane1 = new JScrollPane(txtWriting);
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
-        add(scrollPane1, gbc);
-		
-		JButton bSend = new JButton("Send");
+		add(scrollPane1, gbc);
+
+		bSend = new JButton("Send");
 		bSend.addActionListener(this);
 		gbc.gridx = 2;
 		gbc.gridy = 3;
@@ -163,30 +142,76 @@ public class ChatGui extends JFrame implements Observer, ActionListener {
 		gbc.fill = GridBagConstraints.NONE;
 		this.add(bSend, gbc);
 		
+		bDisconnect = new JButton("Disconnect");
+		bDisconnect.addActionListener(this);
+		gbc.gridy = 4;
+		this.add(bDisconnect, gbc);
+
 		this.pack();
-		this.setVisible(true);
+		//this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		
+	}
+
+	public void update(Observable arg0, Object arg1) {
+		if(arg1 instanceof User){
+			if(this.listModel.contains(arg1)){
+				this.listModel.removeElement(arg1);
+			} else{
+				this.listModel.addElement((User) arg1);
+			}
+		} else{
+			this.listModel.clear();
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == this.bDisconnect){
+			this.disconnect();
+		}
 		
 	}
+
 	
-	public void update(Observable arg0, Object arg1) {
+	public void windowClosing(WindowEvent arg0) {
+		this.disconnect();
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public static void main(String[] args) {
-		ChatGui chat = new ChatGui();
-		chat.ChatWindow();
-	    
-	  }
-	
-	
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

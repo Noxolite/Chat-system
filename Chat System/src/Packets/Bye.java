@@ -1,10 +1,14 @@
 package Packets;
 
+import java.net.InetAddress;
+
 public class Bye extends Packet{
 	private String nickname;
+	private InetAddress ip;
 	
-	public Bye(String nickname){
+	public Bye(String nickname, InetAddress ip){
 		this.nickname = nickname;
+		this.ip = ip;
 	}
 
 	public String getNickname() {
@@ -14,4 +18,14 @@ public class Bye extends Packet{
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(InetAddress ip) {
+		this.ip = ip;
+	}
+	
+	
 }
