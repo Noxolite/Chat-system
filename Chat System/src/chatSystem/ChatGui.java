@@ -1,4 +1,4 @@
-package ChatSystem;
+package chatSystem;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.*;
 
 import javax.swing.*;
+
+import lists.User;
 
 public class ChatGui extends JFrame implements Observer, ActionListener, WindowListener {
 
@@ -34,6 +36,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 		initComponents();
 		this.setAlwaysOnTop(true);
 		addWindowListener(this);
+
 	}
 
 	public static ChatGui getInstance(){
@@ -154,10 +157,9 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 
 	public void update(Observable arg0, Object arg1) {
 		if(arg1 instanceof User){
-			if(this.listModel.contains(arg1)){
-				this.listModel.removeElement(arg1);
-			} else{
-				this.listModel.addElement((User) arg1);
+			this.listModel.clear();
+			for(User us : chatCtrl.getMyUserList().getUserList()){
+				this.listModel.addElement(us);
 			}
 		} else{
 			this.listModel.clear();

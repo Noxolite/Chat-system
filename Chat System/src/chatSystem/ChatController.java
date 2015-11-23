@@ -1,7 +1,7 @@
-package ChatSystem;
+package chatSystem;
 
-import Packets.*;
-import Lists.*;
+import lists.*;
+import packet.*;
 
 public class ChatController {
 
@@ -74,41 +74,46 @@ public class ChatController {
 		UserList.getInstance().removeAll();
 		this.localUser = null;
 	}
-	
+
 	public void receive(Packet inPacket) {
 
 		if(inPacket instanceof Hello){
 			Hello hello = (Hello) inPacket;
 			User remoteUser = new User(hello.getNickname(), hello.getIp());
-			if(!this.myUserList.contains(remoteUser)){
-				this.myUserList.addUser(remoteUser);
+			if(remoteUser.getIp() != this.ni.getLocalAddress()){
+				if(!this.myUserList.getUserList().contains(remoteUser)){
+					this.myUserList.addUser(remoteUser);
+				}
+				this.ni.sendHelloBack(this.getLocalUser());
+				System.out.println("Hello reçu de " + hello.getNickname() + " à l'adresse " + hello.getIp());
 			}
-			this.ni.sendHelloBack(this.getLocalUser());
-			System.out.println("Hello reçu de " + hello.getNickname() + " à l'adresse " + hello.getIp());
 		}
-		
+
 		else if(inPacket instanceof HelloBack){
 			HelloBack helloBack = (HelloBack) inPacket;
 			User remoteUser = new User(helloBack.getNickname(), helloBack.getIp());
-			if(!this.myUserList.contains(remoteUser)){
-				this.myUserList.addUser(remoteUser);
+			if(remoteUser.getIp() != this.ni.getLocalAddress()){
+
+				if(!this.myUserList.getUserList().contains(remoteUser)){
+					this.myUserList.addUser(remoteUser);
+				}
+				System.out.println("HelloBack reçu de " + helloBack.getNickname() + " à l'adresse " + helloBack.getIp());
 			}
-			System.out.println("HelloBack reçu de " + helloBack.getNickname() + " à l'adresse " + helloBack.getIp());
 		}
-		
+
 		else if(inPacket instanceof Bye){
 			Bye bye = (Bye) inPacket;
 			User remoteUser = new User(bye.getNickname(), bye.getIp());
 			this.myUserList.deleteUser(remoteUser);
 			System.out.println("Bye reçu");
 		}
-		
+
 		else{
 			System.out.println("Paquet inconnu");
 		}
-		
+
 	}
-	
+
 	public static void main(String[] args){
 		ChatController chatCtrl = ChatController.getInstance();
 		chatCtrl.setNi(ChatNi.getInstance());

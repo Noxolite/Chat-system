@@ -1,4 +1,5 @@
-package Packets;
+package packet;
+
 
 public class FileResponse extends Packet{
 	private Boolean response;

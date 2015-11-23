@@ -1,19 +1,17 @@
-package Packets;
-import java.io.Serializable;
+package packet;
+
 import java.net.InetAddress;
 
-
-public class Hello extends Packet{
-	
+public class HelloBack extends Packet{
 	private String nickname;
 	private InetAddress ip;
 	
-	public Hello(String nickname, InetAddress ip){
+	public HelloBack(String nickname, InetAddress ip){
 		this.ip = ip;
 		this.nickname = nickname;
 	}
 	public String getNickname() {
-		return this.nickname;
+		return nickname;
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;

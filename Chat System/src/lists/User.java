@@ -1,4 +1,4 @@
-package ChatSystem;
+package lists;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -13,7 +13,7 @@ public class User {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		this.nickName = nickName + "(" + ip.toString() + ")";
+		this.nickName = nickName;
 	}
 	
 	public User(String nickName, InetAddress ip){
@@ -31,6 +31,15 @@ public class User {
 	
 	public String toString(){
 		return this.nickName;
+	}
+	
+	public boolean equals(Object o){
+		User user = (User) o;
+		return (this.getNickName().equals(user.getNickName())); //&& (this.getIp().equals(user.getIp()));
+	}
+	
+	public int compareTo(User user){
+		return this.getNickName().compareTo(user.getNickName());
 	}
 	
 }

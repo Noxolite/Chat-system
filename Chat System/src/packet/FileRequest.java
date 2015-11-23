@@ -1,4 +1,5 @@
-package Packets;
+package packet;
+
 
 public class FileRequest extends Packet{
 	private String path;

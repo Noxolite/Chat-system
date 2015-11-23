@@ -1,4 +1,4 @@
-package ChatSystem;
+package chatSystem;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

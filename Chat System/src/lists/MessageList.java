@@ -1,4 +1,4 @@
-package Lists;
+package lists;
 
 import java.util.Observable;
 
