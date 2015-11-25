@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 
+import packet.Message;
+import lists.MessageList;
 import lists.User;
+import lists.UserList;
 
 public class ChatGui extends JFrame implements Observer, ActionListener, WindowListener {
 
@@ -24,7 +28,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	private JButton bSend;
 	private JButton bDisconnect;
 	private JLabel lWriteHere;
-	private JLabel lListtitle;
+	private JLabel lListTitle;
 	private JList<User> userList;
 	private DefaultListModel<User> listModel;
 	private JScrollPane scrollPane1;
@@ -33,6 +37,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	private ChatGui(){
 		this.chatCtrl = ChatController.getInstance();
 		this.chatCtrl.getMyUserList().addObserver(this);
+		this.chatCtrl.getMyMsgList().addObserver(this);
 		initComponents();
 		this.setAlwaysOnTop(true);
 		addWindowListener(this);
@@ -64,17 +69,22 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 		this.txtRecMessage.setText("");
 		this.txtWriting.setText("");
 	}
+	
+	public void askSendMessage(){
+		this.chatCtrl.performSendMessage(this.txtWriting.getText());
+		this.txtWriting.setText("");
+	}
 
 	public void initComponents(){
 
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		lListtitle = new JLabel("Connected Users");
+		lListTitle = new JLabel("Connected Users");
 		gbc.gridx = gbc.gridy = 0;
 		gbc.gridwidth = gbc.gridheight = 1;
 		gbc.insets = new Insets(10, 10, 5, 10);
-		this.add(lListtitle, gbc);
+		this.add(lListTitle, gbc);
 
 		listModel = new DefaultListModel<User>();
 		userList = new JList<User>(listModel);
@@ -99,6 +109,9 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 		gbc.ipadx = 500;
 		gbc.ipady = 200;
 		this.add(txtRecMessage, gbc);
+		
+		DefaultCaret caret1 = (DefaultCaret)txtRecMessage.getCaret();
+		caret1.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 		scrollPane2 = new JScrollPane(txtRecMessage);
 		gbc.fill = GridBagConstraints.BOTH;
@@ -126,6 +139,9 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 		gbc.ipadx = 400;
 		gbc.ipady = 100;
 		this.add(txtWriting, gbc);
+		
+		DefaultCaret caret2 = (DefaultCaret)txtWriting.getCaret();
+		caret2.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 		scrollPane1 = new JScrollPane(txtWriting);
 		gbc.fill = GridBagConstraints.BOTH;
@@ -156,13 +172,22 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	}
 
 	public void update(Observable arg0, Object arg1) {
-		if(arg1 instanceof User){
-			this.listModel.clear();
-			for(User us : chatCtrl.getMyUserList().getUserList()){
-				this.listModel.addElement(us);
+		if(arg0 instanceof UserList){
+			if(arg1 instanceof User){
+				this.listModel.clear();
+				for(User us : chatCtrl.getMyUserList().getUserList()){
+					this.listModel.addElement(us);
+				}
+			} else{
+				this.listModel.clear();
 			}
-		} else{
-			this.listModel.clear();
+		}else if(arg0 instanceof MessageList){
+			if(arg1 instanceof Message){
+				Message msg = (Message) arg1;
+				this.txtRecMessage.append(msg.getFrom() + " (" + msg.getTime().toString() + ") : \n" + msg.getPayload() + "\n\n");
+			} else{
+				this.txtRecMessage.setText("");
+			}
 		}
 
 	}
@@ -171,6 +196,8 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == this.bDisconnect){
 			this.disconnect();
+		} else if(e.getSource() == this.bSend){
+			this.askSendMessage();
 		}
 		
 	}

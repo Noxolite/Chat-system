@@ -5,7 +5,6 @@ import java.util.*;
 public class UserList extends Observable {
 
 	private static UserList instanceUserList;
-
 	private ArrayList<User> listUsers;
 
 	private UserList() {
@@ -31,11 +30,6 @@ public class UserList extends Observable {
 	}
 	
 	public void deleteUser(User user){
-		/*if(this.listUsers.contains(user)){
-			System.out.println("User trouve");
-		} else{
-			System.out.println("User non trouve");
-		}*/
 		this.listUsers.remove(user);
 		this.setChanged();
 		this.notifyObservers(user);
@@ -48,20 +42,4 @@ public class UserList extends Observable {
 		this.notifyObservers(0);
 	}
 	
-	/*public boolean contains(User user){
-		boolean trouve = false;
-		/*Iterator<User> it = this.listUsers.iterator();
-		while(it.hasNext() && trouve == false){
-			if(it.next().equals(user)){
-				trouve = true;
-			}
-		}
-		for(User us : this.listUsers){
-			if(us.equals(user)){
-				trouve = true;
-			}
-		}
-		return trouve;
-	}*/
-
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.Calendar;
 import java.util.Enumeration;
 
 import lists.User;
@@ -17,11 +18,31 @@ public class ChatNi implements Runnable{
 	private InetAddress localAdress;
 	private String adrBroadcast = ("255.255.255.255");
 	private DatagramSocket socket;
-	private int portLocal = 42026;
+	private int portLocal = 42025;
 	private int portDistant = 42025;
 	private boolean bListening;
 
 	private ChatNi() {
+		/*try {
+			Enumeration<NetworkInterface> interfaces;
+
+			interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface networkInterface = interfaces.nextElement();
+				if (networkInterface.isLoopback())
+					continue;    // Don't want to broadcast to the loopback interface
+				for (InterfaceAddress interfaceAddress :
+					networkInterface.getInterfaceAddresses()) {
+					InetAddress broadcast = interfaceAddress.getBroadcast();
+					if (broadcast == null)
+						continue;
+					// Use the address
+				}
+			}
+		} catch (SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
 
 		try {
 			this.localAdress = InetAddress.getLocalHost();
@@ -29,7 +50,6 @@ public class ChatNi implements Runnable{
 			e.printStackTrace();
 		}
 		this.chatCtrl = ChatController.getInstance();
-		this.bListening = true;
 		startListening();
 
 	}
@@ -96,6 +116,18 @@ public class ChatNi implements Runnable{
 
 	}
 
+	public void sendMessage(/*User userDistant,*/ Message msg){
+		try {
+			DatagramPacket dataSent = toDatagramPacket(msg, InetAddress.getByName(this.adrBroadcast), this.portDistant);
+			this.socket.send(dataSent);
+			System.out.println("Msg envoyé");
+		} catch (UnknownHostException e) {
+			System.out.println("UnknownHostException dans sendMessage de ChatNI");
+		} catch (IOException e) {
+			System.out.println("IOException dans sendMessage de ChatNI");
+		}
+	}
+
 	public static byte[] serialize(Object obj){
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    ObjectOutputStream os;
@@ -136,6 +168,7 @@ public class ChatNi implements Runnable{
 
 	public void startListening(){
 
+		this.bListening = true;
 		try {
 			socket = new DatagramSocket(portLocal);
 			(new Thread(this)).start();
@@ -145,7 +178,7 @@ public class ChatNi implements Runnable{
 
 	}
 	
-	public void StopListening() {
+	public void stopListening() {
         bListening = false;
     }
 
