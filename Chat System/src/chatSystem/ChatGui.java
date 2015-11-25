@@ -31,8 +31,9 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	private JLabel lListTitle;
 	private JList<User> userList;
 	private DefaultListModel<User> listModel;
-	private JScrollPane scrollPane1;
-	private JScrollPane scrollPane2;
+	private JScrollPane jScrollPane1;
+	private JScrollPane jScrollPane2;
+	private JScrollPane jScrollPane3;
 
 	private ChatGui(){
 		this.chatCtrl = ChatController.getInstance();
@@ -71,13 +72,97 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	}
 	
 	public void askSendMessage(){
+		if(this.userList.getSelectedValue() != null){
 		this.chatCtrl.performSendMessage(this.userList.getSelectedValue(),this.txtWriting.getText());
 		this.txtWriting.setText("");
+		}
 	}
 
 	public void initComponents(){
 
-		this.setLayout(new GridBagLayout());
+		jScrollPane1 = new javax.swing.JScrollPane();
+        userList = new javax.swing.JList<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtRecMessage = new javax.swing.JTextArea();
+        lListTitle = new javax.swing.JLabel();
+        lWriteHere = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtWriting = new javax.swing.JTextArea();
+        bSend = new javax.swing.JButton();
+        bDisconnect = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        listModel = new DefaultListModel<User>();
+		userList = new JList<User>(listModel);
+		userList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        
+        jScrollPane1.setViewportView(userList);
+
+        txtRecMessage.setEditable(false);
+        txtRecMessage.setColumns(20);
+        txtRecMessage.setRows(5);
+        jScrollPane2.setViewportView(txtRecMessage);
+
+        lListTitle.setText("Connected users");
+
+        lWriteHere.setText("Enter a message");
+
+        txtWriting.setColumns(20);
+        txtWriting.setRows(5);
+        jScrollPane3.setViewportView(txtWriting);
+
+        bSend.setText("Send");
+        bSend.addActionListener(this);
+        
+        bDisconnect.setText("Log out");
+        bDisconnect.addActionListener(this);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                    .addComponent(lWriteHere)
+                    .addComponent(lListTitle)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(bDisconnect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(lListTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lWriteHere)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bSend, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bDisconnect)))
+                .addContainerGap())
+        );
+
+        pack();
+		
+		/*this.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		lListTitle = new JLabel("Connected Users");
@@ -168,7 +253,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 
 		this.pack();
 		//this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);*/
 	}
 
 	public void update(Observable arg0, Object arg1) {

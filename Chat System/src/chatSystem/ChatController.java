@@ -1,5 +1,7 @@
 package chatSystem;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 
 import lists.*;
@@ -73,6 +75,11 @@ public class ChatController {
 		this.localUser = new User(nickName);
 		this.ni.sendHello(localUser);
 		this.logGui.showChatGui();
+		try {
+			this.myUserList.addUser(new User(("Broadcast"), InetAddress.getByName(this.ni.getAdresseBroadcast())));
+		} catch (UnknownHostException e) {
+			System.out.println("UnknownHostException dans performConnect de ChatController");
+		}
 	}
 
 	public void performDisconnect(){

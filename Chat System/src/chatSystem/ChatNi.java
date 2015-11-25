@@ -50,9 +50,8 @@ public class ChatNi implements Runnable{
 		this.chatCtrl = chatController;
 	}
 
-	public void setAdresseBroadcast(String broadcast)
-	{
-		this.adrBroadcast = broadcast;
+	public String getAdresseBroadcast(){
+		return this.adrBroadcast;
 	}
 	
 	public InetAddress getLocalAddress(){
@@ -106,7 +105,7 @@ public class ChatNi implements Runnable{
 
 	public void sendMessage(User userDistant,Message msg){
 		try {
-			DatagramPacket dataSent = toDatagramPacket(msg, userDistant.getIp()/*InetAddress.getByName(this.adrBroadcast)**/, this.portDistant);
+			DatagramPacket dataSent = toDatagramPacket(msg, userDistant.getIp(), this.portDistant);
 			this.socketEmission.send(dataSent);
 			System.out.println("Msg envoyé");
 		} catch (UnknownHostException e) {
