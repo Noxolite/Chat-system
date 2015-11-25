@@ -6,6 +6,7 @@ import java.net.InetAddress;
 public class Hello extends Packet {
 	private String nickname;
 	private InetAddress ip;
+	static final long serialVersionUID = 43L;
 	
 	public Hello(String nickname, InetAddress ip){
 		this.ip = ip;

@@ -71,7 +71,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	}
 	
 	public void askSendMessage(){
-		this.chatCtrl.performSendMessage(this.txtWriting.getText());
+		this.chatCtrl.performSendMessage(this.userList.getSelectedValue(),this.txtWriting.getText());
 		this.txtWriting.setText("");
 	}
 
@@ -177,16 +177,20 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 				this.listModel.clear();
 				for(User us : chatCtrl.getMyUserList().getUserList()){
 					this.listModel.addElement(us);
+					this.userList.repaint();
 				}
 			} else{
 				this.listModel.clear();
+				this.userList.repaint();
 			}
 		}else if(arg0 instanceof MessageList){
 			if(arg1 instanceof Message){
 				Message msg = (Message) arg1;
 				this.txtRecMessage.append(msg.getFrom() + " (" + msg.getTime().toString() + ") : \n" + msg.getPayload() + "\n\n");
+				this.txtRecMessage.repaint();
 			} else{
 				this.txtRecMessage.setText("");
+				this.txtRecMessage.repaint();
 			}
 		}
 

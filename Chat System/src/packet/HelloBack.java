@@ -5,6 +5,7 @@ import java.net.InetAddress;
 public class HelloBack extends Packet{
 	private String nickname;
 	private InetAddress ip;
+	static final long serialVersionUID = 44L;
 	
 	public HelloBack(String nickname, InetAddress ip){
 		this.ip = ip;

@@ -32,9 +32,5 @@ public class MessageList extends Observable{
 		this.setChanged();
 		this.notifyObservers(0);
 	}
-
-	/*public Message getLastElement(){
-		return this.msgList.get(this.msgList.size() - 1);
-	}*/
 	
 }

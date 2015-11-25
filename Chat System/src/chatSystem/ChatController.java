@@ -69,6 +69,7 @@ public class ChatController {
 
 	public void performConnect(String nickName){
 
+		this.ni.startListening();
 		this.localUser = new User(nickName);
 		this.ni.sendHello(localUser);
 		this.logGui.showChatGui();
@@ -76,7 +77,6 @@ public class ChatController {
 
 	public void performDisconnect(){
 
-		this.ni.stopListening();
 		this.ni.sendBye(this.localUser);
 		//Fermer le GUI
 		this.myUserList.removeAll();
@@ -84,10 +84,10 @@ public class ChatController {
 		this.localUser = null;
 	}
 
-	public void performSendMessage(String payLoad){
+	public void performSendMessage(User user, String payLoad){
 		Calendar cal = Calendar.getInstance();
 		Message msg = new Message(cal.getTime(), this.getLocalUser().getNickName(), payLoad, this.getLocalUser().getIp());
-		this.ni.sendMessage(msg);
+		this.ni.sendMessage(user, msg);
 		this.myMsgList.addMessage(msg);
 	}
 
@@ -129,7 +129,11 @@ public class ChatController {
 
 		else if(inPacket instanceof Message){
 			Message msg = (Message) inPacket;
-			if(!msg.getIp().equals(this.getLocalUser().getIp())){
+			User remoteUser = new User(msg.getFrom(), msg.getIp());
+			if(!remoteUser.getIp().equals(this.getLocalUser().getIp())){
+				if(!this.myUserList.getUserList().contains(remoteUser)){
+					this.myUserList.addUser(remoteUser);
+				}
 				this.getMyMsgList().addMessage(msg);
 				System.out.println("Message recu");
 			}

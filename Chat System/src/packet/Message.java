@@ -8,6 +8,7 @@ public class Message extends Packet{
     private String from;
     private String payload;
     private InetAddress ip ;
+    static final long serialVersionUID = 45L;
 
     public Message(Date time, String from, String payload, InetAddress ip){
         this.time = time;

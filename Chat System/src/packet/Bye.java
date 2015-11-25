@@ -6,6 +6,7 @@ import java.net.InetAddress;
 public class Bye extends Packet{
 	private String nickname;
 	private InetAddress ip;
+	static final long serialVersionUID = 40L;
 
 	public Bye(String nickname, InetAddress ip){
 		this.nickname = nickname;
