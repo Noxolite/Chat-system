@@ -1,11 +1,6 @@
 package chatSystem;
 
-import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,7 +20,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 
 	private static final long serialVersionUID = 1L;
 	private static ChatGui instanceGui;
-	private LogGui mLogGUI ;
+	private LogGui logGui ;
 	private ChatController chatCtrl;
 	private JTextArea txtWriting;
 	private JTextPane txtRecMessage;
@@ -67,12 +62,12 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 	}
 
 	public void setmLogGUI(LogGui mLogGUI) {
-		this.mLogGUI = mLogGUI;
+		this.logGui = mLogGUI;
 	}
 
 	public void disconnect(){
 		this.chatCtrl.performDisconnect();
-		this.mLogGUI.closeChatGui();
+		this.logGui.closeChatGui();
 		this.txtRecMessage.setText("");
 		this.txtWriting.setText("");
 	}
@@ -126,6 +121,8 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
         txtRecMessage.setEditorKit(textPanelHtmlKit);
         txtRecMessage.setDocument(new HTMLDocument());
         jScrollPane2.setViewportView(txtRecMessage);
+        DefaultCaret caret = (DefaultCaret)txtRecMessage.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         lBoxTitle.setText("Dialog box");
 

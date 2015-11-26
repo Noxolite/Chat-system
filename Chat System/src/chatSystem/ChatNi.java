@@ -81,12 +81,12 @@ public class ChatNi implements Runnable{
 
 	public void sendBye(User localUser){
 		try {
+			this.socketReception.close();
+			this.stopListening();
 			Bye msgBye = new Bye(localUser.getNickName(), this.localAdress);
 			DatagramPacket dataSent = toDatagramPacket(msgBye, InetAddress.getByName(this.adrBroadcast), this.portDistant);
 			this.socketEmission.send(dataSent);
-			this.socketReception.close();
 			this.socketEmission.close();
-			this.stopListening();
 			System.out.println("Bye envoyé");
 		} catch (IOException e) {
 			if(bListening){

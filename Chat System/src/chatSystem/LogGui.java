@@ -3,9 +3,6 @@ package chatSystem;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,11 +18,11 @@ public class LogGui extends JFrame implements ActionListener{
 	private JLabel lErreur;
 	private JLabel lTitle;
 	private JLabel lCredit;
-	private ChatGui mGUI ;
+	private ChatGui chatGui ;
 
 	private LogGui(){
 		this.chatCtrl = ChatController.getInstance();
-		this.mGUI = ChatGui.getInstance();
+		this.chatGui = ChatGui.getInstance();
 		initComponents();
 		this.setAlwaysOnTop(true);
 		this.setVisible(true);
@@ -40,20 +37,20 @@ public class LogGui extends JFrame implements ActionListener{
 	}
 
 	public void setmGUI(ChatGui mGUI) {
-		this.mGUI = mGUI;
+		this.chatGui = mGUI;
 	}
 
 	public void showChatGui()
     {
-		mGUI.setTitle(this.chatCtrl.getLocalUser().getNickName() + "'s chat session");
-		mGUI.getTxtRecMessage().setText("Welcome\n\n");
-		mGUI.setVisible(true);
+		chatGui.setTitle(this.chatCtrl.getLocalUser().getNickName() + "'s chat session");
+		chatGui.getTxtRecMessage().setText("Welcome\n\n");
+		chatGui.setVisible(true);
         this.setVisible(false);
     }
 
 	public void closeChatGui()
     {
-        mGUI.setVisible(false);
+        chatGui.setVisible(false);
         this.setVisible(true);
     }
 	
