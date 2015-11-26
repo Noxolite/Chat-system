@@ -39,20 +39,6 @@ public class LogGui extends JFrame implements ActionListener{
 	public void setmGUI(ChatGui mGUI) {
 		this.chatGui = mGUI;
 	}
-
-	public void showChatGui()
-    {
-		chatGui.setTitle(this.chatCtrl.getLocalUser().getNickName() + "'s chat session");
-		chatGui.getTxtRecMessage().setText("Welcome\n\n");
-		chatGui.setVisible(true);
-        this.setVisible(false);
-    }
-
-	public void closeChatGui()
-    {
-        chatGui.setVisible(false);
-        this.setVisible(true);
-    }
 	
 	public void connect(){
 		this.chatCtrl.performConnect(this.txtName.getText());

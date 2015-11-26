@@ -72,7 +72,7 @@ public class ChatController {
 	public void performConnect(String nickName){
 
 		this.localUser = new User(nickName);
-		this.logGui.showChatGui();
+		this.chatGui.showChatGui();
 		this.ni.startListening();
 		this.ni.sendHello(localUser);
 		try {
@@ -157,7 +157,7 @@ public class ChatController {
 		chatCtrl.setNi(ChatNi.getInstance());
 		chatCtrl.setLogGui(LogGui.getInstance());
 		chatCtrl.setChatGui(ChatGui.getInstance());
-		ChatGui.getInstance().setmLogGUI(LogGui.getInstance());
+		ChatGui.getInstance().setLogGui(LogGui.getInstance());
 
 	}
 

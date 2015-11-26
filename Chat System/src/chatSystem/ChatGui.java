@@ -53,21 +53,27 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 		return instanceGui;
 	}
 
-	public JTextPane getTxtRecMessage(){
-		return this.txtRecMessage;
-	}
-
-	public ChatController getChatCtrl() {
-		return chatCtrl;
-	}
-
-	public void setmLogGUI(LogGui mLogGUI) {
+	public void setLogGui(LogGui mLogGUI) {
 		this.logGui = mLogGUI;
 	}
+	
+	public void showChatGui()
+    {
+		this.setTitle(this.chatCtrl.getLocalUser().getNickName() + "'s chat session");
+		this.txtRecMessage.setText("Welcome\n\n");
+		this.setVisible(true);
+        this.logGui.setVisible(false);
+    }
+
+	public void closeChatGui()
+    {
+        this.setVisible(false);
+        this.logGui.setVisible(true);
+    }
 
 	public void disconnect(){
 		this.chatCtrl.performDisconnect();
-		this.logGui.closeChatGui();
+		this.closeChatGui();
 		this.txtRecMessage.setText("");
 		this.txtWriting.setText("");
 	}
@@ -98,6 +104,7 @@ public class ChatGui extends JFrame implements Observer, ActionListener, WindowL
 
         listModel = new DefaultListModel<User>();
 		userList = new JList<User>(listModel);
+		this.listModel.setSize(50);
 		userList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
         jScrollPane1.setViewportView(userList);
