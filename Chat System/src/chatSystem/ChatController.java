@@ -71,10 +71,10 @@ public class ChatController {
 
 	public void performConnect(String nickName){
 
-		this.ni.startListening();
 		this.localUser = new User(nickName);
-		this.ni.sendHello(localUser);
 		this.logGui.showChatGui();
+		this.ni.startListening();
+		this.ni.sendHello(localUser);
 		try {
 			this.myUserList.addUser(new User(("Broadcast"), InetAddress.getByName(this.ni.getAdresseBroadcast())));
 		} catch (UnknownHostException e) {
@@ -99,7 +99,7 @@ public class ChatController {
 	}
 
 	public void receive(Packet inPacket) {
-
+		
 		if(inPacket instanceof Hello){
 			Hello hello = (Hello) inPacket;
 			User remoteUser = new User(hello.getNickname(), hello.getIp());

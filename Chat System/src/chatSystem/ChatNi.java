@@ -31,7 +31,6 @@ public class ChatNi implements Runnable{
 			e.printStackTrace();
 		}
 		this.chatCtrl = ChatController.getInstance();
-		//startListening();
 
 	}
 
@@ -44,10 +43,6 @@ public class ChatNi implements Runnable{
 
 	public ChatController getChatCtrl() {
 		return chatCtrl;
-	}
-
-	public void setChatCtrl(ChatController chatController) {
-		this.chatCtrl = chatController;
 	}
 
 	public String getAdresseBroadcast(){
@@ -127,7 +122,7 @@ public class ChatNi implements Runnable{
 	    return out.toByteArray();
 	}
 	
-	public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+	public Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
 	    ByteArrayInputStream in = new ByteArrayInputStream(data);
 	    ObjectInputStream is = new ObjectInputStream(in);
 	    return is.readObject();
@@ -141,7 +136,7 @@ public class ChatNi implements Runnable{
 		return new DatagramPacket(buffer,length,addrCible,portDistant);
 	}
 	
-	public static Packet toPacket(DatagramPacket in){
+	public Packet toPacket(DatagramPacket in){
 		Packet p = null;
 			try {
 				p = (Packet) deserialize(in.getData());
@@ -171,11 +166,12 @@ public class ChatNi implements Runnable{
     }
 
 	public void run() {
-		
+
+		byte[] streamByte = new byte[1500];
+        DatagramPacket inDatagramPacket = new DatagramPacket(streamByte, streamByte.length);
+        
 		while(bListening){
 			
-			byte[] streamByte = new byte[1500];
-            DatagramPacket inDatagramPacket = new DatagramPacket(streamByte, streamByte.length);
             try {
 				socketReception.receive(inDatagramPacket);
 				Packet inPacket = toPacket(inDatagramPacket);
@@ -189,7 +185,6 @@ public class ChatNi implements Runnable{
             		System.out.println("Fermeture du socket");
             	}
             }
-
 
 		}
 		
