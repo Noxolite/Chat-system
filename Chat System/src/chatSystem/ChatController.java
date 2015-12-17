@@ -11,8 +11,8 @@ public class ChatController {
 
 	private static ChatController instanceController;
 	private ChatNi ni;
-	private ChatGui chatGui;
-	private LogGui logGui;
+	private Gui chatGui;
+	private Gui logGui;
 	private User localUser;
 	private UserList myUserList;
 	private MessageList myMsgList;
@@ -33,7 +33,7 @@ public class ChatController {
 		return ni;
 	}
 
-	public ChatGui getGui() {
+	public Gui getGui() {
 		return chatGui;
 	}
 
@@ -68,13 +68,16 @@ public class ChatController {
 	public MessageList getMyMsgList() {
 		return this.myMsgList;
 	}
-
+	
+	//Called by the logGui when the user wants to connect
 	public void performConnect(String nickName){
-
 		this.localUser = new User(nickName);
-		this.chatGui.showChatGui();
+                this.setChatGui(ChatGui.getInstance());
+		this.chatGui.showGui();
+		this.logGui.hideGui();
 		this.ni.startListening();
 		this.ni.sendHello(localUser);
+		//Add a fake user to send a message using broadcast
 		try {
 			this.myUserList.addUser(new User(("Broadcast"), InetAddress.getByName(this.ni.getAdresseBroadcast())));
 		} catch (UnknownHostException e) {
@@ -82,62 +85,78 @@ public class ChatController {
 		}
 	}
 
+	//Called by the chatGui when the user wants to disconnect
 	public void performDisconnect(){
-
+                this.myMsgList.deleteObservers(); 
+                this.myUserList.deleteObservers();           
 		this.ni.sendBye(this.localUser);
-		//Fermer le GUI
+		//The lists are cleared and the local user deleted
 		this.myUserList.removeAll();
 		this.myMsgList.removeAll();
 		this.localUser = null;
+                this.chatGui.hideGui();
+		this.logGui.showGui();
 	}
 
-	public void performSendMessage(User user, String payLoad){
+	//Called by the chatGui when the user wants to send a message
+	public void performSendMessage(User user, String payLoad,Boolean broadcast){
 		Calendar cal = Calendar.getInstance();
-		Message msg = new Message(cal.getTime(), this.getLocalUser().getNickName(), payLoad, this.getLocalUser().getIp());
+		Message msg = new Message(cal.getTime(), this.getLocalUser().getNickName(), payLoad, this.getLocalUser().getIp(), broadcast);
 		this.ni.sendMessage(user, msg);
 		this.myMsgList.addMessage(msg);
 	}
 
-	public void receive(Packet inPacket) {
+	//Called by the chatNI when a message is received
+	public void performReception(Packet inPacket) {
 		
+		//Hello received
 		if(inPacket instanceof Hello){
 			Hello hello = (Hello) inPacket;
 			User remoteUser = new User(hello.getNickname(), hello.getIp());
+			//Verify if the IP received is different from the local address
 			if(!remoteUser.getIp().equals(this.getLocalUser().getIp())){
 				System.out.println("IP locale" + hello.getIp() + " IP comparee " + hello.getIp());
+				//Add the remote user if he is not already in the list
 				if(!this.myUserList.getUserList().contains(remoteUser)){
 					this.myUserList.addUser(remoteUser);
 				}
 				this.ni.sendHelloBack(this.getLocalUser());
-				System.out.println("Hello reçu de " + hello.getNickname() + " à l'adresse " + hello.getIp());
+				System.out.println("Hello reï¿½u de " + hello.getNickname() + " ï¿½ l'adresse " + hello.getIp());
 			}
 		}
 
+		//HelloBack received
 		else if(inPacket instanceof HelloBack){
 			HelloBack helloBack = (HelloBack) inPacket;
 			User remoteUser = new User(helloBack.getNickname(), helloBack.getIp());
+			//Verify if the IP received is different from the local address
 			if(!remoteUser.getIp().equals(this.getLocalUser().getIp())){
-
+				//Add the remote user if he is not already in the list
 				if(!this.myUserList.getUserList().contains(remoteUser)){
 					this.myUserList.addUser(remoteUser);
 				}
-				System.out.println("HelloBack reçu de " + helloBack.getNickname() + " à l'adresse " + helloBack.getIp());
+				System.out.println("HelloBack reï¿½u de " + helloBack.getNickname() + " ï¿½ l'adresse " + helloBack.getIp());
 			}
 		}
 
+		//Bye received
 		else if(inPacket instanceof Bye){
 			Bye bye = (Bye) inPacket;
 			User remoteUser = new User(bye.getNickname(), bye.getIp());
+			//Verify if the IP received is different from the local address
 			if(!remoteUser.getIp().equals(this.getLocalUser().getIp())){
 				this.myUserList.deleteUser(remoteUser);
-				System.out.println("Bye reçu");
+				System.out.println("Bye reï¿½u");
 			}
 		}
 
+		//Message received
 		else if(inPacket instanceof Message){
 			Message msg = (Message) inPacket;
 			User remoteUser = new User(msg.getFrom(), msg.getIp());
+			//Verify if the IP received is different from the local address
 			if(!remoteUser.getIp().equals(this.getLocalUser().getIp())){
+				//Add the remote user if he is not already in the list
 				if(!this.myUserList.getUserList().contains(remoteUser)){
 					this.myUserList.addUser(remoteUser);
 				}
@@ -152,12 +171,12 @@ public class ChatController {
 
 	}
 
+	//In order to make the chat system work well the windows firewall should be deactivated
 	public static void main(String[] args){
 		ChatController chatCtrl = ChatController.getInstance();
 		chatCtrl.setNi(ChatNi.getInstance());
 		chatCtrl.setLogGui(LogGui.getInstance());
-		chatCtrl.setChatGui(ChatGui.getInstance());
-		ChatGui.getInstance().setLogGui(LogGui.getInstance());
+		
 
 	}
 

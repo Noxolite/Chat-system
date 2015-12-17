@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
-import java.util.Calendar;
-import java.util.Enumeration;
-
 import lists.User;
 import packet.*;
 
@@ -58,7 +55,7 @@ public class ChatNi implements Runnable{
 			Hello msgHello = new Hello(localUser.getNickName(),this.localAdress);
 			DatagramPacket dataSent = toDatagramPacket(msgHello, InetAddress.getByName(this.adrBroadcast), this.portDistant);
 			this.socketEmission.send(dataSent);
-			System.out.println("Hello envoyé");
+			System.out.println("Hello envoyï¿½");
 		} catch (UnknownHostException e) {
 			System.out.println("UnknownHostException dans sendHello de ChatNi");
 		}
@@ -72,7 +69,7 @@ public class ChatNi implements Runnable{
 		try {
 			DatagramPacket dataSent = toDatagramPacket(msgHelloBack, userDistant.getIp(), this.portDistant);
 			this.socketEmission.send(dataSent);
-			System.out.println("HelloBack envoyé");
+			System.out.println("HelloBack envoyï¿½");
 		} catch (IOException e) {
 			System.out.println("IOException dans sendHelloBack de ChatNI");
 		}
@@ -87,7 +84,7 @@ public class ChatNi implements Runnable{
 			DatagramPacket dataSent = toDatagramPacket(msgBye, InetAddress.getByName(this.adrBroadcast), this.portDistant);
 			this.socketEmission.send(dataSent);
 			this.socketEmission.close();
-			System.out.println("Bye envoyé");
+			System.out.println("Bye envoyï¿½");
 		} catch (IOException e) {
 			if(bListening){
 				System.out.println("IOException dans sendBye de ChatNI");
@@ -102,7 +99,7 @@ public class ChatNi implements Runnable{
 		try {
 			DatagramPacket dataSent = toDatagramPacket(msg, userDistant.getIp(), this.portDistant);
 			this.socketEmission.send(dataSent);
-			System.out.println("Msg envoyé");
+			System.out.println("Msg envoyï¿½");
 		} catch (UnknownHostException e) {
 			System.out.println("UnknownHostException dans sendMessage de ChatNI");
 		} catch (IOException e) {
@@ -128,6 +125,7 @@ public class ChatNi implements Runnable{
 	    return is.readObject();
 	}
 	
+	//Convert an object packet into a datagramPacket in order to send it
 	public DatagramPacket toDatagramPacket(Packet p, InetAddress addrCible, int portDistant){
 		byte[] msgSeria;
 		msgSeria = serialize(p);
@@ -136,12 +134,13 @@ public class ChatNi implements Runnable{
 		return new DatagramPacket(buffer,length,addrCible,portDistant);
 	}
 	
+	//Convert a datagramPacket into an object packet in order to do the treatment on it
 	public Packet toPacket(DatagramPacket in){
 		Packet p = null;
 			try {
 				p = (Packet) deserialize(in.getData());
 			} catch (ClassNotFoundException e) {
-				System.out.println("Classe non trouvée dans toPacket de Packet");
+				System.out.println("Classe non trouvï¿½e dans toPacket de Packet");
 			} catch (IOException e) {
 				System.out.println("IOException dans toPacket de Packet");
 			}
@@ -149,14 +148,13 @@ public class ChatNi implements Runnable{
 	}
 
 	public void startListening(){
-
 		this.bListening = true;
 		try {
 			socketReception = new DatagramSocket(portLocal);
 			socketEmission = new DatagramSocket();
 			(new Thread(this)).start();
 		} catch (SocketException e) {
-			System.out.println("Erreur de création du socket dans startListening de ChatNI");
+			System.out.println("Erreur de crï¿½ation du socket dans startListening de ChatNI");
 		}
 
 	}
@@ -176,7 +174,7 @@ public class ChatNi implements Runnable{
 				socketReception.receive(inDatagramPacket);
 				Packet inPacket = toPacket(inDatagramPacket);
 				if(inPacket != null){
-					this.chatCtrl.receive(inPacket);
+					this.chatCtrl.performReception(inPacket);
 				}
             } catch (IOException e) {
             	if(bListening){

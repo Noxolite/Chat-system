@@ -41,5 +41,9 @@ public class UserList extends Observable {
 		this.setChanged();
 		this.notifyObservers(0);
 	}
+        
+        public User getBroadcast(){
+            return this.listUsers.get(0);
+        }
 	
 }
